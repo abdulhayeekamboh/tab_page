@@ -130,20 +130,21 @@ if (quickLaunchMenu) {
     quickLaunchMenu.addEventListener("click", function (event) {
         const card = event.target.closest("[data-url]");
 
-        if (!card) {
-            return;
-        }
+        if (!card) return;
 
         const url = card.dataset.url;
 
-        if (!url) {
-            return;
-        }
+        if (!url) return;
 
-        window.open(url, "_blank", "noopener,noreferrer");
+        window.parent.postMessage(
+            {
+                type: "OPEN_URL",
+                url: url
+            },
+            "*"
+        );
     });
 }
-
 
 /* =========================================================
    LOCAL NOTES STORAGE
