@@ -150,11 +150,8 @@ if (quickLaunchMenu) {
                 return;
             }
 
-           window.open(
-    url,
-    "_blank",
-    "noopener,noreferrer"
-);
+           window.location.href =
+    url;
     );
 }
 
