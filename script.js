@@ -122,37 +122,26 @@ if (searchInput) {
 
 /* =========================================================
    QUICK-LAUNCH CARDS
-   (ChatGPT / MoviesMod / YouTube / etc.)
 ========================================================= */
 
-const quickLaunchMenu =
-    document.querySelector(".menu");
+const quickLaunchMenu = document.querySelector(".menu");
 
 if (quickLaunchMenu) {
+    quickLaunchMenu.addEventListener("click", function (event) {
+        const card = event.target.closest("[data-url]");
 
-    quickLaunchMenu.addEventListener(
-        "click",
-        function(event) {
+        if (!card) {
+            return;
+        }
 
-            const card =
-                event.target.closest(
-                    "[data-url]"
-                );
+        const url = card.dataset.url;
 
-            if (!card) {
-                return;
-            }
+        if (!url) {
+            return;
+        }
 
-            const url =
-                card.dataset.url;
-
-            if (!url) {
-                return;
-            }
-
-           window.location.href =
-    url;
-    );
+        window.open(url, "_blank", "noopener,noreferrer");
+    });
 }
 
 
