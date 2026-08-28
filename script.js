@@ -89,35 +89,49 @@ setInterval(updateClock, 1000);
    SEARCH BAR
    KEEPING YOUR ORIGINAL SEARCH DESIGN
 ========================================================= */
+/* =========================================================
+   SEARCH BAR
+   ========================================================= */
 
-const searchInput =
-    document.querySelector(
-        ".search_engine input"
-    );
+const searchInput = document.querySelector(".search_engine input");
 
 if (searchInput) {
 
-    searchInput.addEventListener(
-        "keydown",
-        function(event) {
+    searchInput.addEventListener("keydown", function (event) {
 
-            if (event.key !== "Enter") {
-                return;
-            }
-
-            const query =
-                searchInput.value.trim();
-
-            if (!query) {
-                return;
-            }
-
-            window.location.href =
-                "https://www.google.com/search?q=" +
-                encodeURIComponent(query);
+        if (event.key !== "Enter") {
+            return;
         }
-    );
+
+        const query = searchInput.value.trim();
+
+        if (!query) {
+            return;
+        }
+
+        const googleUrl =
+            "https://www.google.com/search?q=" +
+            encodeURIComponent(query);
+
+        /*
+         * IMPORTANT:
+         * The website is running inside an iframe.
+         * Do NOT use window.location.href here.
+         *
+         * Send the URL to the parent extension page instead.
+         */
+        window.parent.postMessage(
+            {
+                type: "OPEN_URL",
+                url: googleUrl
+            },
+            "*"
+        );
+
+    });
+
 }
+
 
 
 /* =========================================================
