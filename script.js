@@ -1,3 +1,4 @@
+/* =========================================================
    COSMIC WEBTAB - MAIN JAVASCRIPT
 ========================================================= */
 
@@ -88,76 +89,73 @@ setInterval(updateClock, 1000);
    SEARCH BAR
    KEEPING YOUR ORIGINAL SEARCH DESIGN
 ========================================================= */
-/* =========================================================
-   SEARCH BAR
-   ========================================================= */
 
-const searchInput = document.querySelector(".search_engine input");
+const searchInput =
+    document.querySelector(
+        ".search_engine input"
+    );
 
 if (searchInput) {
 
-    searchInput.addEventListener("keydown", function (event) {
+    searchInput.addEventListener(
+        "keydown",
+        function(event) {
 
-        if (event.key !== "Enter") {
-            return;
+            if (event.key !== "Enter") {
+                return;
+            }
+
+            const query =
+                searchInput.value.trim();
+
+            if (!query) {
+                return;
+            }
+
+            window.location.href =
+                "https://www.google.com/search?q=" +
+                encodeURIComponent(query);
         }
-
-        const query = searchInput.value.trim();
-
-        if (!query) {
-            return;
-        }
-
-        const googleUrl =
-            "https://www.google.com/search?q=" +
-            encodeURIComponent(query);
-
-        /*
-         * IMPORTANT:
-         * The website is running inside an iframe.
-         * Do NOT use window.location.href here.
-         *
-         * Send the URL to the parent extension page instead.
-         */
-        window.parent.postMessage(
-            {
-                type: "OPEN_URL",
-                url: googleUrl
-            },
-            "*"
-        );
-
-    });
-
+    );
 }
-
 
 
 /* =========================================================
    QUICK-LAUNCH CARDS
+   (ChatGPT / MoviesMod / YouTube / etc.)
 ========================================================= */
 
-const quickLaunchMenu = document.querySelector(".menu");
+const quickLaunchMenu =
+    document.querySelector(".menu");
 
 if (quickLaunchMenu) {
-    quickLaunchMenu.addEventListener("click", function (event) {
-        const card = event.target.closest("[data-url]");
 
-        if (!card) return;
+    quickLaunchMenu.addEventListener(
+        "click",
+        function(event) {
 
-        const url = card.dataset.url;
+            const card =
+                event.target.closest(
+                    "[data-url]"
+                );
 
-        if (!url) return;
+            if (!card) {
+                return;
+            }
 
-        window.parent.postMessage(
-            {
-                type: "OPEN_URL",
-                url: url
-            },
-            "*"
-        );
-    });
+            const url =
+                card.dataset.url;
+
+            if (!url) {
+                return;
+            }
+
+            window.location.href =
+                url;
+        }
+    );
 }
+
 
 /* =========================================================
    LOCAL NOTES STORAGE
