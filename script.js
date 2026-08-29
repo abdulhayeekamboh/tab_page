@@ -1,17 +1,16 @@
+"use strict";
+
 /* =========================================================
 COSMIC WEBTAB - MAIN JAVASCRIPT
 ========================================================= */
-
-"use strict";
 
 /* =========================================================
 CLOCK
 ========================================================= */
 
 function updateClock() {
-
-```
 const now = new Date();
+
 
 const hours = now.getHours();
 const minutes = now.getMinutes();
@@ -39,24 +38,23 @@ const secondHand =
 
 if (hourHand) {
     hourHand.style.transform =
-        `rotate(${hourAngle}deg)`;
+        rotate(${hourAngle}deg);
 }
 
 if (minuteHand) {
     minuteHand.style.transform =
-        `rotate(${minuteAngle}deg)`;
+        rotate(${minuteAngle}deg);
 }
 
 if (secondHand) {
     secondHand.style.transform =
-        `rotate(${secondAngle}deg)`;
+        rotate(${secondAngle}deg);
 }
 
 const timeElement =
     document.querySelector(".time");
 
 if (timeElement) {
-
     let h = hours % 12;
 
     if (h === 0) {
@@ -76,124 +74,85 @@ if (timeElement) {
         hours >= 12 ? "PM" : "AM";
 
     timeElement.innerHTML =
-        `<small>${hh}:${mm}:${ss} ${ampm}</small>`;
+        <small>${hh}:${mm}:${ss} ${ampm}</small>;
 }
-```
+
 
 }
 
 updateClock();
-
 setInterval(updateClock, 1000);
 
 /* =========================================================
 SEARCH BAR
-KEEPING YOUR ORIGINAL SEARCH DESIGN
 GOOGLE OPENS IN A NEW NORMAL TAB
+ORIGINAL SEARCH DESIGN IS NOT CHANGED
 ========================================================= */
 
 const searchInput =
-document.querySelector(
-".search_engine input"
-);
+document.querySelector(".search_engine input");
 
 if (searchInput) {
+searchInput.addEventListener("keydown", function (event) {
+if (event.key !== "Enter") {
+return;
+}
 
-```
-searchInput.addEventListener(
-    "keydown",
-    function(event) {
 
-        if (event.key !== "Enter") {
-            return;
-        }
+    const query =
+        searchInput.value.trim();
 
-        const query =
-            searchInput.value.trim();
-
-        if (!query) {
-            return;
-        }
-
-        const googleURL =
-            "https://www.google.com/search?q=" +
-            encodeURIComponent(query);
-
-        /*
-         * IMPORTANT:
-         *
-         * Do NOT use:
-         *
-         * window.location.href = googleURL;
-         *
-         * because that replaces the Cosmic WebTab.
-         *
-         * Google also refuses iframe embedding.
-         *
-         * Therefore Google opens in a normal
-         * browser tab while this New Tab page
-         * remains untouched.
-         */
-
-        window.open(
-            googleURL,
-            "_blank",
-            "noopener,noreferrer"
-        );
+    if (!query) {
+        return;
     }
-);
-```
+
+    const googleURL =
+        "https://www.google.com/search?q=" +
+        encodeURIComponent(query);
+
+    window.open(
+        googleURL,
+        "_blank",
+        "noopener,noreferrer"
+    );
+});
+
 
 }
 
 /* =========================================================
 QUICK-LAUNCH CARDS
-ChatGPT / MoviesMod / YouTube / etc.
-OPEN EXTERNAL WEBSITES IN NORMAL TAB
+YOUTUBE / CHATGPT / OTHER SITES
+OPEN IN A NORMAL NEW TAB
 ========================================================= */
 
 const quickLaunchMenu =
 document.querySelector(".menu");
 
 if (quickLaunchMenu) {
+quickLaunchMenu.addEventListener("click", function (event) {
+const card =
+event.target.closest("[data-url]");
 
-```
-quickLaunchMenu.addEventListener(
-    "click",
-    function(event) {
 
-        const card =
-            event.target.closest(
-                "[data-url]"
-            );
-
-        if (!card) {
-            return;
-        }
-
-        const url =
-            card.dataset.url;
-
-        if (!url) {
-            return;
-        }
-
-        /*
-         * External websites such as YouTube,
-         * Google and other websites may refuse
-         * iframe embedding.
-         *
-         * Open them normally instead.
-         */
-
-        window.open(
-            url,
-            "_blank",
-            "noopener,noreferrer"
-        );
+    if (!card) {
+        return;
     }
-);
-```
+
+    const url =
+        card.dataset.url;
+
+    if (!url) {
+        return;
+    }
+
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
+});
+
 
 }
 
@@ -205,12 +164,10 @@ const NOTES_KEY =
 "cosmic_webtab_notes_v1";
 
 function getNotes() {
-
-```
 try {
+const stored =
+localStorage.getItem(NOTES_KEY);
 
-    const stored =
-        localStorage.getItem(NOTES_KEY);
 
     if (!stored) {
         return [];
@@ -224,7 +181,6 @@ try {
         : [];
 
 } catch (error) {
-
     console.error(
         "Could not read notes:",
         error
@@ -232,33 +188,32 @@ try {
 
     return [];
 }
-```
+
 
 }
 
 function saveNotes(notes) {
-
-```
+try {
 localStorage.setItem(
-    NOTES_KEY,
-    JSON.stringify(notes)
+NOTES_KEY,
+JSON.stringify(notes)
 );
-```
-
+} catch (error) {
+console.error(
+"Could not save notes:",
+error
+);
+}
 }
 
 function generateNoteId() {
-
-```
 return (
-    Date.now().toString(36) +
-    "-" +
-    Math.random()
-        .toString(36)
-        .slice(2)
+Date.now().toString(36) +
+"-" +
+Math.random()
+.toString(36)
+.slice(2)
 );
-```
-
 }
 
 /* =========================================================
@@ -297,29 +252,26 @@ RENDER NOTES
 ========================================================= */
 
 function renderNotes() {
-
-```
 if (!savedNotesList) {
-    return;
+return;
 }
+
 
 const notes =
     getNotes();
 
 if (noteCount) {
-
     noteCount.textContent =
         notes.length;
 }
 
 if (notes.length === 0) {
-
-    savedNotesList.innerHTML = `
+    savedNotesList.innerHTML = 
         <div class="empty-notes">
             No saved notes yet.<br>
             Write something above.
         </div>
-    `;
+    ;
 
     return;
 }
@@ -328,7 +280,7 @@ savedNotesList.innerHTML =
     notes
         .slice()
         .reverse()
-        .map(function(note) {
+        .map(function (note) {
 
             const safeTitle =
                 escapeHTML(
@@ -347,12 +299,11 @@ savedNotesList.innerHTML =
                     note.createdAt
                 );
 
-            return `
+            return 
                 <div
                     class="saved-note"
                     data-id="${note.id}"
                 >
-
                     <button
                         class="delete-note"
                         data-delete-id="${note.id}"
@@ -372,12 +323,11 @@ savedNotesList.innerHTML =
                     <div class="saved-note-date">
                         ${formatDate(date)}
                     </div>
-
                 </div>
-            `;
+            ;
         })
         .join("");
-```
+
 
 }
 
@@ -386,16 +336,12 @@ ESCAPE HTML
 ========================================================= */
 
 function escapeHTML(value) {
-
-```
 return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-```
-
+.replaceAll("&", "&")
+.replaceAll("<", "<")
+.replaceAll(">", ">")
+.replaceAll('"', """)
+.replaceAll("'", "'");
 }
 
 /* =========================================================
@@ -403,15 +349,13 @@ DATE FORMAT
 ========================================================= */
 
 function formatDate(date) {
-
-```
 if (
-    !date ||
-    Number.isNaN(date.getTime())
+!date ||
+Number.isNaN(date.getTime())
 ) {
-
-    return "Unknown date";
+return "Unknown date";
 }
+
 
 return date.toLocaleString(
     undefined,
@@ -423,7 +367,7 @@ return date.toLocaleString(
         minute: "2-digit"
     }
 );
-```
+
 
 }
 
@@ -432,12 +376,11 @@ SAVE NOTE
 ========================================================= */
 
 function saveCurrentNote() {
-
-```
 const title =
-    noteTitle
-        ? noteTitle.value.trim()
-        : "";
+noteTitle
+? noteTitle.value.trim()
+: "";
+
 
 const text =
     noteText
@@ -445,9 +388,7 @@ const text =
         : "";
 
 if (!text) {
-
     if (saveStatus) {
-
         saveStatus.textContent =
             "Write something first.";
 
@@ -466,7 +407,6 @@ const notes =
     getNotes();
 
 notes.push({
-
     id:
         generateNoteId(),
 
@@ -492,7 +432,6 @@ if (noteText) {
 }
 
 if (saveStatus) {
-
     saveStatus.textContent =
         "✓ Note saved successfully";
 
@@ -503,40 +442,34 @@ if (saveStatus) {
 renderNotes();
 
 return true;
-```
+
 
 }
 
 if (saveNoteBtn) {
-
-```
 saveNoteBtn.addEventListener(
-    "click",
-    saveCurrentNote
+"click",
+saveCurrentNote
 );
-```
-
 }
 
 if (noteText) {
-
-```
 noteText.addEventListener(
-    "keydown",
-    function(event) {
+"keydown",
+function (event) {
+
 
         if (
             (event.ctrlKey || event.metaKey) &&
             event.key === "Enter"
         ) {
-
             event.preventDefault();
 
             saveCurrentNote();
         }
     }
 );
-```
+
 
 }
 
@@ -545,11 +478,10 @@ CLEAR INPUT
 ========================================================= */
 
 if (clearNoteBtn) {
-
-```
 clearNoteBtn.addEventListener(
-    "click",
-    function() {
+"click",
+function () {
+
 
         if (noteTitle) {
             noteTitle.value = "";
@@ -560,7 +492,6 @@ clearNoteBtn.addEventListener(
         }
 
         if (saveStatus) {
-
             saveStatus.textContent =
                 "Ready for a new note.";
 
@@ -569,7 +500,7 @@ clearNoteBtn.addEventListener(
         }
     }
 );
-```
+
 
 }
 
@@ -578,11 +509,10 @@ DELETE INDIVIDUAL NOTE
 ========================================================= */
 
 if (savedNotesList) {
-
-```
 savedNotesList.addEventListener(
-    "click",
-    function(event) {
+"click",
+function (event) {
+
 
         const button =
             event.target.closest(
@@ -597,18 +527,18 @@ savedNotesList.addEventListener(
             button.dataset.deleteId;
 
         const notes =
-            getNotes()
-                .filter(
-                    note =>
-                        note.id !== id
-                );
+            getNotes().filter(
+                function (note) {
+                    return note.id !== id;
+                }
+            );
 
         saveNotes(notes);
 
         renderNotes();
     }
 );
-```
+
 
 }
 
@@ -617,11 +547,10 @@ DELETE ALL NOTES
 ========================================================= */
 
 if (clearAllNotesBtn) {
-
-```
 clearAllNotesBtn.addEventListener(
-    "click",
-    function() {
+"click",
+function () {
+
 
         const notes =
             getNotes();
@@ -646,7 +575,6 @@ clearAllNotesBtn.addEventListener(
         renderNotes();
 
         if (saveStatus) {
-
             saveStatus.textContent =
                 "All notes deleted.";
 
@@ -655,7 +583,7 @@ clearAllNotesBtn.addEventListener(
         }
     }
 );
-```
+
 
 }
 
@@ -664,11 +592,10 @@ EXPORT NOTES AS JSON
 ========================================================= */
 
 if (exportNotesBtn) {
-
-```
 exportNotesBtn.addEventListener(
-    "click",
-    function() {
+"click",
+function () {
+
 
         const notes =
             getNotes();
@@ -711,7 +638,9 @@ exportNotesBtn.addEventListener(
         link.download =
             "cosmic-webtab-notes.json";
 
-        document.body.appendChild(link);
+        document.body.appendChild(
+            link
+        );
 
         link.click();
 
@@ -720,7 +649,7 @@ exportNotesBtn.addEventListener(
         URL.revokeObjectURL(url);
     }
 );
-```
+
 
 }
 
@@ -728,14 +657,14 @@ renderNotes();
 
 /* =========================================================
 PUBLIC IP / LOCATION
-JSONP VERSION
+JSONP
 ========================================================= */
 
 function loadPublicActivity() {
 
-```
+
 window.cosmicIPCallback =
-    function(data) {
+    function (data) {
 
         try {
 
@@ -743,7 +672,6 @@ window.cosmicIPCallback =
                 !data ||
                 !data.ip
             ) {
-
                 throw new Error(
                     "Invalid IP data"
                 );
@@ -768,6 +696,8 @@ window.cosmicIPCallback =
             );
 
             showActivityError();
+
+            showWeatherUnavailable();
         }
     };
 
@@ -784,7 +714,7 @@ script.async =
     true;
 
 script.onerror =
-    function() {
+    function () {
 
         console.error(
             "Could not load IP location service."
@@ -792,18 +722,13 @@ script.onerror =
 
         showActivityError();
 
-        /*
-         * Use a fixed fallback weather request
-         * instead of recursively calling the
-         * same failing request forever.
-         */
         loadFallbackWeather();
     };
 
 document.head.appendChild(
     script
 );
-```
+
 
 }
 
@@ -813,7 +738,7 @@ UPDATE PUBLIC ACTIVITY
 
 function updatePublicActivity(data) {
 
-```
+
 setText(
     "activityIP",
     data.ip ||
@@ -859,9 +784,9 @@ setText(
 
 setText(
     "activityScreen",
-    `${window.screen.width} × ${window.screen.height}`
+    ${window.screen.width} × ${window.screen.height}
 );
-```
+
 
 }
 
@@ -871,7 +796,7 @@ ACTIVITY ERROR
 
 function showActivityError() {
 
-```
+
 setText(
     "activityIP",
     "Unavailable"
@@ -906,14 +831,9 @@ setText(
 
 setText(
     "activityScreen",
-    `${window.screen.width} × ${window.screen.height}`
+    ${window.screen.width} × ${window.screen.height}
 );
 
-setText(
-    "weatherCity",
-    "Weather unavailable"
-);
-```
 
 }
 
@@ -923,16 +843,15 @@ SAFE TEXT SETTER
 
 function setText(id, value) {
 
-```
+
 const element =
     document.getElementById(id);
 
 if (element) {
-
     element.textContent =
         value;
 }
-```
+
 
 }
 
@@ -942,7 +861,7 @@ BROWSER DETECTION
 
 function detectBrowser() {
 
-```
+
 const ua =
     navigator.userAgent;
 
@@ -970,7 +889,7 @@ if (
 }
 
 return "Unknown browser";
-```
+
 
 }
 
@@ -980,7 +899,7 @@ PLATFORM DETECTION
 
 function detectPlatform() {
 
-```
+
 const ua =
     navigator.userAgent;
 
@@ -1005,7 +924,7 @@ if (/Linux/i.test(ua)) {
 }
 
 return "Unknown";
-```
+
 
 }
 
@@ -1021,15 +940,14 @@ city,
 country
 ) {
 
-```
+
 if (
     latitude === undefined ||
     longitude === undefined ||
     latitude === null ||
     longitude === null
 ) {
-
-    showWeatherUnavailable();
+    loadFallbackWeather();
 
     return;
 }
@@ -1038,8 +956,8 @@ try {
 
     const url =
         "https://api.open-meteo.com/v1/forecast" +
-        `?latitude=${encodeURIComponent(latitude)}` +
-        `&longitude=${encodeURIComponent(longitude)}` +
+        ?latitude=${encodeURIComponent(latitude)} +
+        &longitude=${encodeURIComponent(longitude)} +
         "&current=" +
         [
             "temperature_2m",
@@ -1055,9 +973,8 @@ try {
         await fetch(url);
 
     if (!response.ok) {
-
         throw new Error(
-            `Weather HTTP ${response.status}`
+            Weather HTTP ${response.status}
         );
     }
 
@@ -1077,14 +994,9 @@ try {
         error
     );
 
-    /*
-     * Do NOT call loadWeather() again here.
-     * That would create an endless retry loop.
-     */
-
     showWeatherUnavailable();
 }
-```
+
 
 }
 
@@ -1094,15 +1006,6 @@ FALLBACK WEATHER
 
 function loadFallbackWeather() {
 
-```
-/*
- * New York fallback prevents the weather
- * card from looking broken when the IP
- * service cannot provide coordinates.
- *
- * It is clearly labelled as unavailable
- * rather than being shown as your location.
- */
 
 loadWeather(
     40.7128,
@@ -1110,7 +1013,7 @@ loadWeather(
     "Weather unavailable",
     ""
 );
-```
+
 
 }
 
@@ -1120,7 +1023,7 @@ WEATHER UNAVAILABLE
 
 function showWeatherUnavailable() {
 
-```
+
 setText(
     "weatherTemp",
     "--"
@@ -1185,7 +1088,7 @@ if (content) {
     content.style.display =
         "flex";
 }
-```
+
 
 }
 
@@ -1199,12 +1102,11 @@ city,
 country
 ) {
 
-```
+
 const current =
     data.current;
 
 if (!current) {
-
     showWeatherUnavailable();
 
     return;
@@ -1245,17 +1147,17 @@ setText(
 
 setText(
     "weatherFeels",
-    `${feels}°`
+    ${feels}°
 );
 
 setText(
     "weatherHumidity",
-    `${humidity}%`
+    ${humidity}%
 );
 
 setText(
     "weatherWind",
-    `${wind} km/h`
+    ${wind} km/h
 );
 
 setText(
@@ -1277,7 +1179,7 @@ setText(
 setText(
     "weatherCountry",
     country
-        ? `· ${country}`
+        ? · ${country}
         : ""
 );
 
@@ -1302,17 +1204,15 @@ const content =
     );
 
 if (loading) {
-
     loading.style.display =
         "none";
 }
 
 if (content) {
-
     content.style.display =
         "flex";
 }
-```
+
 
 }
 
@@ -1323,9 +1223,8 @@ WMO WEATHER CODES
 
 function getWeatherDescription(code) {
 
-```
-if (code === 0) {
 
+if (code === 0) {
     return {
         text: "Clear sky",
         icon: "☀️"
@@ -1336,7 +1235,6 @@ if (
     code === 1 ||
     code === 2
 ) {
-
     return {
         text: "Partly cloudy",
         icon: "🌤️"
@@ -1344,7 +1242,6 @@ if (
 }
 
 if (code === 3) {
-
     return {
         text: "Overcast",
         icon: "☁️"
@@ -1355,7 +1252,6 @@ if (
     code === 45 ||
     code === 48
 ) {
-
     return {
         text: "Foggy",
         icon: "🌫️"
@@ -1366,7 +1262,6 @@ if (
     code >= 51 &&
     code <= 57
 ) {
-
     return {
         text: "Drizzle",
         icon: "🌦️"
@@ -1377,7 +1272,6 @@ if (
     code >= 61 &&
     code <= 67
 ) {
-
     return {
         text: "Rain",
         icon: "🌧️"
@@ -1388,7 +1282,6 @@ if (
     code >= 71 &&
     code <= 77
 ) {
-
     return {
         text: "Snow",
         icon: "❄️"
@@ -1399,7 +1292,6 @@ if (
     code >= 80 &&
     code <= 82
 ) {
-
     return {
         text: "Rain showers",
         icon: "🌦️"
@@ -1410,7 +1302,6 @@ if (
     code === 85 ||
     code === 86
 ) {
-
     return {
         text: "Snow showers",
         icon: "🌨️"
@@ -1421,7 +1312,6 @@ if (
     code >= 95 &&
     code <= 99
 ) {
-
     return {
         text: "Thunderstorm",
         icon: "⛈️"
@@ -1432,7 +1322,7 @@ return {
     text: "Unknown",
     icon: "🌡️"
 };
-```
+
 
 }
 
@@ -1447,7 +1337,7 @@ weatherCode,
 precipitation
 ) {
 
-```
+
 const rainy =
     (
         weatherCode >= 51 &&
@@ -1466,7 +1356,6 @@ const storm =
     weatherCode >= 95;
 
 if (storm) {
-
     return "Rain jacket + waterproof shoes. Stay protected from the storm.";
 }
 
@@ -1474,40 +1363,34 @@ if (
     snowy ||
     feels <= 0
 ) {
-
     return "Heavy coat, warm layers, gloves and insulated shoes.";
 }
 
 if (feels <= 8) {
-
     return rainy
         ? "Warm jacket + waterproof shoes. Bring an umbrella."
         : "Warm jacket, long trousers and closed shoes.";
 }
 
 if (feels <= 15) {
-
     return rainy
         ? "Light jacket + waterproof layer. An umbrella is useful."
         : "Light jacket or hoodie with long trousers.";
 }
 
 if (feels <= 22) {
-
     return rainy
         ? "Light clothes with a rain jacket or umbrella."
         : "Comfortable shirt with light trousers or jeans.";
 }
 
 if (feels <= 28) {
-
     return rainy
         ? "Light clothes + rain protection."
         : "T-shirt and comfortable lightweight trousers.";
 }
 
 return "Light breathable clothes, shorts if comfortable, and stay hydrated.";
-```
 
 }
 
