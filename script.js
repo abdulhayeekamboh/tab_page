@@ -1,3 +1,4 @@
+```javascript
 /* =========================================================
    COSMIC WEBTAB - MAIN JAVASCRIPT
 ========================================================= */
@@ -14,9 +15,7 @@ function updateClock() {
     const now = new Date();
 
     const hours = now.getHours();
-
     const minutes = now.getMinutes();
-
     const seconds = now.getSeconds();
 
     const hourAngle =
@@ -89,8 +88,7 @@ setInterval(updateClock, 1000);
 
 /* =========================================================
    SEARCH BAR
-   KEEPING YOUR ORIGINAL SEARCH DESIGN
-   GOOGLE OPENS NORMALLY - NO IFRAME
+   GOOGLE OPENS OUTSIDE THE IFRAME
 ========================================================= */
 
 const searchInput =
@@ -119,7 +117,16 @@ if (searchInput) {
                 "https://www.google.com/search?q=" +
                 encodeURIComponent(query);
 
-            window.location.href = googleURL;
+            /*
+             * The webtab itself is running inside an iframe
+             * in the browser extension.
+             *
+             * window.top makes Google open in the actual
+             * browser tab instead of inside the iframe.
+             */
+
+            window.top.location.href =
+                googleURL;
         }
     );
 }
@@ -127,7 +134,8 @@ if (searchInput) {
 
 /* =========================================================
    QUICK-LAUNCH CARDS
-   (ChatGPT / MoviesMod / YouTube / etc.)
+   ChatGPT / MoviesMod / YouTube / etc.
+   OPEN OUTSIDE THE IFRAME
 ========================================================= */
 
 const quickLaunchMenu =
@@ -155,7 +163,12 @@ if (quickLaunchMenu) {
                 return;
             }
 
-            window.location.href =
+            /*
+             * Open the destination in the actual browser tab
+             * instead of trying to load it inside the iframe.
+             */
+
+            window.top.location.href =
                 url;
         }
     );
@@ -495,15 +508,22 @@ if (clearNoteBtn) {
         "click",
         function() {
 
-            noteTitle.value = "";
+            if (noteTitle) {
+                noteTitle.value = "";
+            }
 
-            noteText.value = "";
+            if (noteText) {
+                noteText.value = "";
+            }
 
-            saveStatus.textContent =
-                "Ready for a new note.";
+            if (saveStatus) {
 
-            saveStatus.style.color =
-                "";
+                saveStatus.textContent =
+                    "Ready for a new note.";
+
+                saveStatus.style.color =
+                    "";
+            }
         }
     );
 }
@@ -1314,3 +1334,4 @@ function getClothingAdvice(
 ========================================================= */
 
 loadPublicActivity();
+```
