@@ -9,75 +9,72 @@ CLOCK
 ========================================================= */
 
 function updateClock() {
-const now = new Date();
+    const now = new Date();
 
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
 
-const hours = now.getHours();
-const minutes = now.getMinutes();
-const seconds = now.getSeconds();
+    const hourAngle =
+        ((hours % 12) * 30) +
+        (minutes * 0.5);
 
-const hourAngle =
-    ((hours % 12) * 30) +
-    (minutes * 0.5);
+    const minuteAngle =
+        (minutes * 6) +
+        (seconds * 0.1);
 
-const minuteAngle =
-    (minutes * 6) +
-    (seconds * 0.1);
+    const secondAngle =
+        seconds * 6;
 
-const secondAngle =
-    seconds * 6;
+    const hourHand =
+        document.querySelector(".hourHand");
 
-const hourHand =
-    document.querySelector(".hourHand");
+    const minuteHand =
+        document.querySelector(".minuteHand");
 
-const minuteHand =
-    document.querySelector(".minuteHand");
+    const secondHand =
+        document.querySelector(".secondHand");
 
-const secondHand =
-    document.querySelector(".secondHand");
-
-if (hourHand) {
-    hourHand.style.transform =
-        rotate(${hourAngle}deg);
-}
-
-if (minuteHand) {
-    minuteHand.style.transform =
-        rotate(${minuteAngle}deg);
-}
-
-if (secondHand) {
-    secondHand.style.transform =
-        rotate(${secondAngle}deg);
-}
-
-const timeElement =
-    document.querySelector(".time");
-
-if (timeElement) {
-    let h = hours % 12;
-
-    if (h === 0) {
-        h = 12;
+    if (hourHand) {
+        hourHand.style.transform =
+            `rotate(${hourAngle}deg)`;
     }
 
-    const hh =
-        String(h).padStart(2, "0");
+    if (minuteHand) {
+        minuteHand.style.transform =
+            `rotate(${minuteAngle}deg)`;
+    }
 
-    const mm =
-        String(minutes).padStart(2, "0");
+    if (secondHand) {
+        secondHand.style.transform =
+            `rotate(${secondAngle}deg)`;
+    }
 
-    const ss =
-        String(seconds).padStart(2, "0");
+    const timeElement =
+        document.querySelector(".time");
 
-    const ampm =
-        hours >= 12 ? "PM" : "AM";
+    if (timeElement) {
+        let h = hours % 12;
 
-    timeElement.innerHTML =
-        <small>${hh}:${mm}:${ss} ${ampm}</small>;
-}
+        if (h === 0) {
+            h = 12;
+        }
 
+        const hh =
+            String(h).padStart(2, "0");
 
+        const mm =
+            String(minutes).padStart(2, "0");
+
+        const ss =
+            String(seconds).padStart(2, "0");
+
+        const ampm =
+            hours >= 12 ? "PM" : "AM";
+
+        timeElement.innerHTML =
+            `<small>${hh}:${mm}:${ss} ${ampm}</small>`;
+    }
 }
 
 updateClock();
@@ -90,34 +87,31 @@ ORIGINAL SEARCH DESIGN IS NOT CHANGED
 ========================================================= */
 
 const searchInput =
-document.querySelector(".search_engine input");
+    document.querySelector(".search_engine input");
 
 if (searchInput) {
-searchInput.addEventListener("keydown", function (event) {
-if (event.key !== "Enter") {
-return;
-}
+    searchInput.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter") {
+            return;
+        }
 
+        const query =
+            searchInput.value.trim();
 
-    const query =
-        searchInput.value.trim();
+        if (!query) {
+            return;
+        }
 
-    if (!query) {
-        return;
-    }
+        const googleURL =
+            "https://www.google.com/search?q=" +
+            encodeURIComponent(query);
 
-    const googleURL =
-        "https://www.google.com/search?q=" +
-        encodeURIComponent(query);
-
-    window.open(
-        googleURL,
-        "_blank",
-        "noopener,noreferrer"
-    );
-});
-
-
+        window.open(
+            googleURL,
+            "_blank",
+            "noopener,noreferrer"
+        );
+    });
 }
 
 /* =========================================================
@@ -127,33 +121,30 @@ OPEN IN A NORMAL NEW TAB
 ========================================================= */
 
 const quickLaunchMenu =
-document.querySelector(".menu");
+    document.querySelector(".menu");
 
 if (quickLaunchMenu) {
-quickLaunchMenu.addEventListener("click", function (event) {
-const card =
-event.target.closest("[data-url]");
+    quickLaunchMenu.addEventListener("click", function (event) {
+        const card =
+            event.target.closest("[data-url]");
 
+        if (!card) {
+            return;
+        }
 
-    if (!card) {
-        return;
-    }
+        const url =
+            card.dataset.url;
 
-    const url =
-        card.dataset.url;
+        if (!url) {
+            return;
+        }
 
-    if (!url) {
-        return;
-    }
-
-    window.open(
-        url,
-        "_blank",
-        "noopener,noreferrer"
-    );
-});
-
-
+        window.open(
+            url,
+            "_blank",
+            "noopener,noreferrer"
+        );
+    });
 }
 
 /* =========================================================
@@ -161,59 +152,56 @@ LOCAL NOTES STORAGE
 ========================================================= */
 
 const NOTES_KEY =
-"cosmic_webtab_notes_v1";
+    "cosmic_webtab_notes_v1";
 
 function getNotes() {
-try {
-const stored =
-localStorage.getItem(NOTES_KEY);
+    try {
+        const stored =
+            localStorage.getItem(NOTES_KEY);
 
+        if (!stored) {
+            return [];
+        }
 
-    if (!stored) {
+        const notes =
+            JSON.parse(stored);
+
+        return Array.isArray(notes)
+            ? notes
+            : [];
+
+    } catch (error) {
+        console.error(
+            "Could not read notes:",
+            error
+        );
+
         return [];
     }
-
-    const notes =
-        JSON.parse(stored);
-
-    return Array.isArray(notes)
-        ? notes
-        : [];
-
-} catch (error) {
-    console.error(
-        "Could not read notes:",
-        error
-    );
-
-    return [];
-}
-
-
 }
 
 function saveNotes(notes) {
-try {
-localStorage.setItem(
-NOTES_KEY,
-JSON.stringify(notes)
-);
-} catch (error) {
-console.error(
-"Could not save notes:",
-error
-);
-}
+    try {
+        localStorage.setItem(
+            NOTES_KEY,
+            JSON.stringify(notes)
+        );
+    } catch (error) {
+        console.error(
+            "Could not save notes:",
+            error
+        );
+    }
 }
 
 function generateNoteId() {
-return (
-Date.now().toString(36) +
-"-" +
-Math.random()
-.toString(36)
-.slice(2)
-);
+    return (
+        Date.now().toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .slice(2)
+    );
 }
 
 /* =========================================================
@@ -221,114 +209,112 @@ NOTE ELEMENTS
 ========================================================= */
 
 const noteTitle =
-document.getElementById("noteTitle");
+    document.getElementById("noteTitle");
 
 const noteText =
-document.getElementById("noteText");
+    document.getElementById("noteText");
 
 const saveNoteBtn =
-document.getElementById("saveNoteBtn");
+    document.getElementById("saveNoteBtn");
 
 const clearNoteBtn =
-document.getElementById("clearNoteBtn");
+    document.getElementById("clearNoteBtn");
 
 const savedNotesList =
-document.getElementById("savedNotesList");
+    document.getElementById("savedNotesList");
 
 const noteCount =
-document.getElementById("noteCount");
+    document.getElementById("noteCount");
 
 const saveStatus =
-document.getElementById("saveStatus");
+    document.getElementById("saveStatus");
 
 const exportNotesBtn =
-document.getElementById("exportNotesBtn");
+    document.getElementById("exportNotesBtn");
 
 const clearAllNotesBtn =
-document.getElementById("clearAllNotesBtn");
+    document.getElementById("clearAllNotesBtn");
 
 /* =========================================================
 RENDER NOTES
 ========================================================= */
 
 function renderNotes() {
-if (!savedNotesList) {
-return;
-}
+    if (!savedNotesList) {
+        return;
+    }
 
+    const notes =
+        getNotes();
 
-const notes =
-    getNotes();
+    if (noteCount) {
+        noteCount.textContent =
+            notes.length;
+    }
 
-if (noteCount) {
-    noteCount.textContent =
-        notes.length;
-}
+    if (notes.length === 0) {
+        savedNotesList.innerHTML =
+            `
+            <div class="empty-notes">
+                No saved notes yet.<br>
+                Write something above.
+            </div>
+            `;
 
-if (notes.length === 0) {
-    savedNotesList.innerHTML = 
-        <div class="empty-notes">
-            No saved notes yet.<br>
-            Write something above.
-        </div>
-    ;
+        return;
+    }
 
-    return;
-}
+    savedNotesList.innerHTML =
+        notes
+            .slice()
+            .reverse()
+            .map(function (note) {
 
-savedNotesList.innerHTML =
-    notes
-        .slice()
-        .reverse()
-        .map(function (note) {
+                const safeTitle =
+                    escapeHTML(
+                        note.title ||
+                        "Untitled Note"
+                    );
 
-            const safeTitle =
-                escapeHTML(
-                    note.title ||
-                    "Untitled Note"
-                );
+                const safeText =
+                    escapeHTML(
+                        note.text ||
+                        ""
+                    );
 
-            const safeText =
-                escapeHTML(
-                    note.text ||
-                    ""
-                );
+                const date =
+                    new Date(
+                        note.createdAt
+                    );
 
-            const date =
-                new Date(
-                    note.createdAt
-                );
-
-            return 
-                <div
-                    class="saved-note"
-                    data-id="${note.id}"
-                >
-                    <button
-                        class="delete-note"
-                        data-delete-id="${note.id}"
-                        title="Delete note"
+                return `
+                    <div
+                        class="saved-note"
+                        data-id="${note.id}"
                     >
-                        ×
-                    </button>
+                        <button
+                            class="delete-note"
+                            data-delete-id="${note.id}"
+                            title="Delete note"
+                        >
+                            ×
+                        </button>
 
-                    <div class="saved-note-title">
-                        ${safeTitle}
+                        <div class="saved-note-title">
+                            ${safeTitle}
+                        </div>
+
+                        <div class="saved-note-preview">
+                            ${safeText}
+                        </div>
+
+                        <div class="saved-note-date">
+                            ${formatDate(date)}
+                        </div>
                     </div>
-
-                    <div class="saved-note-preview">
-                        ${safeText}
-                    </div>
-
-                    <div class="saved-note-date">
-                        ${formatDate(date)}
-                    </div>
-                </div>
-            ;
-        })
-        .join("");
-
-
+                `;
+            })
+            .join("");
 }
 
 /* =========================================================
@@ -336,12 +322,12 @@ ESCAPE HTML
 ========================================================= */
 
 function escapeHTML(value) {
-return String(value)
-.replaceAll("&", "&")
-.replaceAll("<", "<")
-.replaceAll(">", ">")
-.replaceAll('"', """)
-.replaceAll("'", "'");
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
 
 /* =========================================================
@@ -349,26 +335,23 @@ DATE FORMAT
 ========================================================= */
 
 function formatDate(date) {
-if (
-!date ||
-Number.isNaN(date.getTime())
-) {
-return "Unknown date";
-}
-
-
-return date.toLocaleString(
-    undefined,
-    {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
+    if (
+        !date ||
+        Number.isNaN(date.getTime())
+    ) {
+        return "Unknown date";
     }
-);
 
-
+    return date.toLocaleString(
+        undefined,
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
 }
 
 /* =========================================================
@@ -376,101 +359,95 @@ SAVE NOTE
 ========================================================= */
 
 function saveCurrentNote() {
-const title =
-noteTitle
-? noteTitle.value.trim()
-: "";
+    const title =
+        noteTitle
+            ? noteTitle.value.trim()
+            : "";
 
+    const text =
+        noteText
+            ? noteText.value.trim()
+            : "";
 
-const text =
-    noteText
-        ? noteText.value.trim()
-        : "";
+    if (!text) {
+        if (saveStatus) {
+            saveStatus.textContent =
+                "Write something first.";
 
-if (!text) {
-    if (saveStatus) {
-        saveStatus.textContent =
-            "Write something first.";
+            saveStatus.style.color =
+                "#ff7ca8";
+        }
 
-        saveStatus.style.color =
-            "#ff7ca8";
+        if (noteText) {
+            noteText.focus();
+        }
+
+        return false;
+    }
+
+    const notes =
+        getNotes();
+
+    notes.push({
+        id:
+            generateNoteId(),
+
+        title:
+            title ||
+            "Untitled Note",
+
+        text:
+            text,
+
+        createdAt:
+            new Date().toISOString()
+    });
+
+    saveNotes(notes);
+
+    if (noteTitle) {
+        noteTitle.value = "";
     }
 
     if (noteText) {
-        noteText.focus();
+        noteText.value = "";
     }
 
-    return false;
-}
+    if (saveStatus) {
+        saveStatus.textContent =
+            "✓ Note saved successfully";
 
-const notes =
-    getNotes();
+        saveStatus.style.color =
+            "#65e7ad";
+    }
 
-notes.push({
-    id:
-        generateNoteId(),
+    renderNotes();
 
-    title:
-        title ||
-        "Untitled Note",
-
-    text:
-        text,
-
-    createdAt:
-        new Date().toISOString()
-});
-
-saveNotes(notes);
-
-if (noteTitle) {
-    noteTitle.value = "";
-}
-
-if (noteText) {
-    noteText.value = "";
-}
-
-if (saveStatus) {
-    saveStatus.textContent =
-        "✓ Note saved successfully";
-
-    saveStatus.style.color =
-        "#65e7ad";
-}
-
-renderNotes();
-
-return true;
-
-
+    return true;
 }
 
 if (saveNoteBtn) {
-saveNoteBtn.addEventListener(
-"click",
-saveCurrentNote
-);
+    saveNoteBtn.addEventListener(
+        "click",
+        saveCurrentNote
+    );
 }
 
 if (noteText) {
-noteText.addEventListener(
-"keydown",
-function (event) {
+    noteText.addEventListener(
+        "keydown",
+        function (event) {
 
+            if (
+                (event.ctrlKey || event.metaKey) &&
+                event.key === "Enter"
+            ) {
+                event.preventDefault();
 
-        if (
-            (event.ctrlKey || event.metaKey) &&
-            event.key === "Enter"
-        ) {
-            event.preventDefault();
-
-            saveCurrentNote();
+                saveCurrentNote();
+            }
         }
-    }
-);
-
-
+    );
 }
 
 /* =========================================================
@@ -478,30 +455,27 @@ CLEAR INPUT
 ========================================================= */
 
 if (clearNoteBtn) {
-clearNoteBtn.addEventListener(
-"click",
-function () {
+    clearNoteBtn.addEventListener(
+        "click",
+        function () {
 
+            if (noteTitle) {
+                noteTitle.value = "";
+            }
 
-        if (noteTitle) {
-            noteTitle.value = "";
+            if (noteText) {
+                noteText.value = "";
+            }
+
+            if (saveStatus) {
+                saveStatus.textContent =
+                    "Ready for a new note.";
+
+                saveStatus.style.color =
+                    "";
+            }
         }
-
-        if (noteText) {
-            noteText.value = "";
-        }
-
-        if (saveStatus) {
-            saveStatus.textContent =
-                "Ready for a new note.";
-
-            saveStatus.style.color =
-                "";
-        }
-    }
-);
-
-
+    );
 }
 
 /* =========================================================
@@ -509,37 +483,34 @@ DELETE INDIVIDUAL NOTE
 ========================================================= */
 
 if (savedNotesList) {
-savedNotesList.addEventListener(
-"click",
-function (event) {
+    savedNotesList.addEventListener(
+        "click",
+        function (event) {
 
+            const button =
+                event.target.closest(
+                    "[data-delete-id]"
+                );
 
-        const button =
-            event.target.closest(
-                "[data-delete-id]"
-            );
+            if (!button) {
+                return;
+            }
 
-        if (!button) {
-            return;
+            const id =
+                button.dataset.deleteId;
+
+            const notes =
+                getNotes().filter(
+                    function (note) {
+                        return note.id !== id;
+                    }
+                );
+
+            saveNotes(notes);
+
+            renderNotes();
         }
-
-        const id =
-            button.dataset.deleteId;
-
-        const notes =
-            getNotes().filter(
-                function (note) {
-                    return note.id !== id;
-                }
-            );
-
-        saveNotes(notes);
-
-        renderNotes();
-    }
-);
-
-
+    );
 }
 
 /* =========================================================
@@ -547,44 +518,41 @@ DELETE ALL NOTES
 ========================================================= */
 
 if (clearAllNotesBtn) {
-clearAllNotesBtn.addEventListener(
-"click",
-function () {
+    clearAllNotesBtn.addEventListener(
+        "click",
+        function () {
 
+            const notes =
+                getNotes();
 
-        const notes =
-            getNotes();
+            if (!notes.length) {
+                return;
+            }
 
-        if (!notes.length) {
-            return;
-        }
+            const confirmed =
+                confirm(
+                    "Delete all saved notes?"
+                );
 
-        const confirmed =
-            confirm(
-                "Delete all saved notes?"
+            if (!confirmed) {
+                return;
+            }
+
+            localStorage.removeItem(
+                NOTES_KEY
             );
 
-        if (!confirmed) {
-            return;
+            renderNotes();
+
+            if (saveStatus) {
+                saveStatus.textContent =
+                    "All notes deleted.";
+
+                saveStatus.style.color =
+                    "#ff7ca8";
+            }
         }
-
-        localStorage.removeItem(
-            NOTES_KEY
-        );
-
-        renderNotes();
-
-        if (saveStatus) {
-            saveStatus.textContent =
-                "All notes deleted.";
-
-            saveStatus.style.color =
-                "#ff7ca8";
-        }
-    }
-);
-
-
+    );
 }
 
 /* =========================================================
@@ -592,65 +560,62 @@ EXPORT NOTES AS JSON
 ========================================================= */
 
 if (exportNotesBtn) {
-exportNotesBtn.addEventListener(
-"click",
-function () {
+    exportNotesBtn.addEventListener(
+        "click",
+        function () {
 
+            const notes =
+                getNotes();
 
-        const notes =
-            getNotes();
+            const data =
+                JSON.stringify(
+                    {
+                        application:
+                            "Cosmic WebTab",
 
-        const data =
-            JSON.stringify(
-                {
-                    application:
-                        "Cosmic WebTab",
+                        exportedAt:
+                            new Date()
+                                .toISOString(),
 
-                    exportedAt:
-                        new Date()
-                            .toISOString(),
+                        notes:
+                            notes
+                    },
+                    null,
+                    2
+                );
 
-                    notes:
-                        notes
-                },
-                null,
-                2
+            const blob =
+                new Blob(
+                    [data],
+                    {
+                        type:
+                            "application/json"
+                    }
+                );
+
+            const url =
+                URL.createObjectURL(blob);
+
+            const link =
+                document.createElement("a");
+
+            link.href =
+                url;
+
+            link.download =
+                "cosmic-webtab-notes.json";
+
+            document.body.appendChild(
+                link
             );
 
-        const blob =
-            new Blob(
-                [data],
-                {
-                    type:
-                        "application/json"
-                }
-            );
+            link.click();
 
-        const url =
-            URL.createObjectURL(blob);
+            link.remove();
 
-        const link =
-            document.createElement("a");
-
-        link.href =
-            url;
-
-        link.download =
-            "cosmic-webtab-notes.json";
-
-        document.body.appendChild(
-            link
-        );
-
-        link.click();
-
-        link.remove();
-
-        URL.revokeObjectURL(url);
-    }
-);
-
-
+            URL.revokeObjectURL(url);
+        }
+    );
 }
 
 renderNotes();
@@ -662,74 +627,70 @@ JSONP
 
 function loadPublicActivity() {
 
+    window.cosmicIPCallback =
+        function (data) {
 
-window.cosmicIPCallback =
-    function (data) {
+            try {
 
-        try {
+                if (
+                    !data ||
+                    !data.ip
+                ) {
+                    throw new Error(
+                        "Invalid IP data"
+                    );
+                }
 
-            if (
-                !data ||
-                !data.ip
-            ) {
-                throw new Error(
-                    "Invalid IP data"
+                updatePublicActivity(
+                    data
                 );
+
+                loadWeather(
+                    data.latitude,
+                    data.longitude,
+                    data.city,
+                    data.country_name
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Public activity data error:",
+                    error
+                );
+
+                showActivityError();
+
+                showWeatherUnavailable();
             }
+        };
 
-            updatePublicActivity(
-                data
-            );
+    const script =
+        document.createElement(
+            "script"
+        );
 
-            loadWeather(
-                data.latitude,
-                data.longitude,
-                data.city,
-                data.country_name
-            );
+    script.src =
+        "https://ipapi.co/jsonp/?callback=cosmicIPCallback";
 
-        } catch (error) {
+    script.async =
+        true;
+
+    script.onerror =
+        function () {
 
             console.error(
-                "Public activity data error:",
-                error
+                "Could not load IP location service."
             );
 
             showActivityError();
 
-            showWeatherUnavailable();
-        }
-    };
+            loadFallbackWeather();
+        };
 
-
-const script =
-    document.createElement(
-        "script"
+    document.head.appendChild(
+        script
     );
-
-script.src =
-    "https://ipapi.co/jsonp/?callback=cosmicIPCallback";
-
-script.async =
-    true;
-
-script.onerror =
-    function () {
-
-        console.error(
-            "Could not load IP location service."
-        );
-
-        showActivityError();
-
-        loadFallbackWeather();
-    };
-
-document.head.appendChild(
-    script
-);
-
-
 }
 
 /* =========================================================
@@ -738,56 +699,53 @@ UPDATE PUBLIC ACTIVITY
 
 function updatePublicActivity(data) {
 
+    setText(
+        "activityIP",
+        data.ip ||
+        "Unavailable"
+    );
 
-setText(
-    "activityIP",
-    data.ip ||
-    "Unavailable"
-);
+    const location =
+        [
+            data.city,
+            data.region,
+            data.country_name
+        ]
+        .filter(Boolean)
+        .join(", ");
 
-const location =
-    [
-        data.city,
-        data.region,
-        data.country_name
-    ]
-    .filter(Boolean)
-    .join(", ");
+    setText(
+        "activityLocation",
+        location ||
+        "Unavailable"
+    );
 
-setText(
-    "activityLocation",
-    location ||
-    "Unavailable"
-);
+    setText(
+        "activityOrg",
+        data.org ||
+        "Unavailable"
+    );
 
-setText(
-    "activityOrg",
-    data.org ||
-    "Unavailable"
-);
+    setText(
+        "activityTimezone",
+        data.timezone ||
+        "Unavailable"
+    );
 
-setText(
-    "activityTimezone",
-    data.timezone ||
-    "Unavailable"
-);
+    setText(
+        "activityBrowser",
+        detectBrowser()
+    );
 
-setText(
-    "activityBrowser",
-    detectBrowser()
-);
+    setText(
+        "activityPlatform",
+        detectPlatform()
+    );
 
-setText(
-    "activityPlatform",
-    detectPlatform()
-);
-
-setText(
-    "activityScreen",
-    ${window.screen.width} × ${window.screen.height}
-);
-
-
+    setText(
+        "activityScreen",
+        `${window.screen.width} × ${window.screen.height}`
+    );
 }
 
 /* =========================================================
@@ -796,45 +754,42 @@ ACTIVITY ERROR
 
 function showActivityError() {
 
+    setText(
+        "activityIP",
+        "Unavailable"
+    );
 
-setText(
-    "activityIP",
-    "Unavailable"
-);
+    setText(
+        "activityLocation",
+        "Unavailable"
+    );
 
-setText(
-    "activityLocation",
-    "Unavailable"
-);
+    setText(
+        "activityOrg",
+        "Unavailable"
+    );
 
-setText(
-    "activityOrg",
-    "Unavailable"
-);
+    setText(
+        "activityTimezone",
+        Intl.DateTimeFormat()
+            .resolvedOptions()
+            .timeZone
+    );
 
-setText(
-    "activityTimezone",
-    Intl.DateTimeFormat()
-        .resolvedOptions()
-        .timeZone
-);
+    setText(
+        "activityBrowser",
+        detectBrowser()
+    );
 
-setText(
-    "activityBrowser",
-    detectBrowser()
-);
+    setText(
+        "activityPlatform",
+        detectPlatform()
+    );
 
-setText(
-    "activityPlatform",
-    detectPlatform()
-);
-
-setText(
-    "activityScreen",
-    ${window.screen.width} × ${window.screen.height}
-);
-
-
+    setText(
+        "activityScreen",
+        `${window.screen.width} × ${window.screen.height}`
+    );
 }
 
 /* =========================================================
@@ -843,16 +798,13 @@ SAFE TEXT SETTER
 
 function setText(id, value) {
 
+    const element =
+        document.getElementById(id);
 
-const element =
-    document.getElementById(id);
-
-if (element) {
-    element.textContent =
-        value;
-}
-
-
+    if (element) {
+        element.textContent =
+            value;
+    }
 }
 
 /* =========================================================
@@ -861,36 +813,33 @@ BROWSER DETECTION
 
 function detectBrowser() {
 
+    const ua =
+        navigator.userAgent;
 
-const ua =
-    navigator.userAgent;
+    if (/Edg\//i.test(ua)) {
+        return "Microsoft Edge";
+    }
 
-if (/Edg\//i.test(ua)) {
-    return "Microsoft Edge";
-}
+    if (/OPR\//i.test(ua)) {
+        return "Opera";
+    }
 
-if (/OPR\//i.test(ua)) {
-    return "Opera";
-}
+    if (/Chrome\//i.test(ua)) {
+        return "Google Chrome";
+    }
 
-if (/Chrome\//i.test(ua)) {
-    return "Google Chrome";
-}
+    if (/Firefox\//i.test(ua)) {
+        return "Firefox";
+    }
 
-if (/Firefox\//i.test(ua)) {
-    return "Firefox";
-}
+    if (
+        /Safari\//i.test(ua) &&
+        !/Chrome\//i.test(ua)
+    ) {
+        return "Safari";
+    }
 
-if (
-    /Safari\//i.test(ua) &&
-    !/Chrome\//i.test(ua)
-) {
-    return "Safari";
-}
-
-return "Unknown browser";
-
-
+    return "Unknown browser";
 }
 
 /* =========================================================
@@ -899,33 +848,30 @@ PLATFORM DETECTION
 
 function detectPlatform() {
 
+    const ua =
+        navigator.userAgent;
 
-const ua =
-    navigator.userAgent;
+    if (/Windows/i.test(ua)) {
+        return "Windows";
+    }
 
-if (/Windows/i.test(ua)) {
-    return "Windows";
-}
+    if (/Android/i.test(ua)) {
+        return "Android";
+    }
 
-if (/Android/i.test(ua)) {
-    return "Android";
-}
+    if (/iPhone|iPad|iPod/i.test(ua)) {
+        return "iOS";
+    }
 
-if (/iPhone|iPad|iPod/i.test(ua)) {
-    return "iOS";
-}
+    if (/Mac OS/i.test(ua)) {
+        return "macOS";
+    }
 
-if (/Mac OS/i.test(ua)) {
-    return "macOS";
-}
+    if (/Linux/i.test(ua)) {
+        return "Linux";
+    }
 
-if (/Linux/i.test(ua)) {
-    return "Linux";
-}
-
-return "Unknown";
-
-
+    return "Unknown";
 }
 
 /* =========================================================
@@ -934,70 +880,67 @@ OPEN-METEO
 ========================================================= */
 
 async function loadWeather(
-latitude,
-longitude,
-city,
-country
+    latitude,
+    longitude,
+    city,
+    country
 ) {
 
+    if (
+        latitude === undefined ||
+        longitude === undefined ||
+        latitude === null ||
+        longitude === null
+    ) {
+        loadFallbackWeather();
 
-if (
-    latitude === undefined ||
-    longitude === undefined ||
-    latitude === null ||
-    longitude === null
-) {
-    loadFallbackWeather();
-
-    return;
-}
-
-try {
-
-    const url =
-        "https://api.open-meteo.com/v1/forecast" +
-        ?latitude=${encodeURIComponent(latitude)} +
-        &longitude=${encodeURIComponent(longitude)} +
-        "&current=" +
-        [
-            "temperature_2m",
-            "apparent_temperature",
-            "relative_humidity_2m",
-            "precipitation",
-            "weather_code",
-            "wind_speed_10m"
-        ].join(",") +
-        "&timezone=auto";
-
-    const response =
-        await fetch(url);
-
-    if (!response.ok) {
-        throw new Error(
-            Weather HTTP ${response.status}
-        );
+        return;
     }
 
-    const data =
-        await response.json();
+    try {
 
-    updateWeather(
-        data,
-        city,
-        country
-    );
+        const url =
+            "https://api.open-meteo.com/v1/forecast" +
+            `?latitude=${encodeURIComponent(latitude)}` +
+            `&longitude=${encodeURIComponent(longitude)}` +
+            "&current=" +
+            [
+                "temperature_2m",
+                "apparent_temperature",
+                "relative_humidity_2m",
+                "precipitation",
+                "weather_code",
+                "wind_speed_10m"
+            ].join(",") +
+            "&timezone=auto";
 
-} catch (error) {
+        const response =
+            await fetch(url);
 
-    console.error(
-        "Weather lookup failed:",
-        error
-    );
+        if (!response.ok) {
+            throw new Error(
+                `Weather HTTP ${response.status}`
+            );
+        }
 
-    showWeatherUnavailable();
-}
+        const data =
+            await response.json();
 
+        updateWeather(
+            data,
+            city,
+            country
+        );
 
+    } catch (error) {
+
+        console.error(
+            "Weather lookup failed:",
+            error
+        );
+
+        showWeatherUnavailable();
+    }
 }
 
 /* =========================================================
@@ -1006,15 +949,12 @@ FALLBACK WEATHER
 
 function loadFallbackWeather() {
 
-
-loadWeather(
-    40.7128,
-    -74.0060,
-    "Weather unavailable",
-    ""
-);
-
-
+    loadWeather(
+        40.7128,
+        -74.0060,
+        "Weather unavailable",
+        ""
+    );
 }
 
 /* =========================================================
@@ -1023,73 +963,70 @@ WEATHER UNAVAILABLE
 
 function showWeatherUnavailable() {
 
-
-setText(
-    "weatherTemp",
-    "--"
-);
-
-setText(
-    "weatherFeels",
-    "--"
-);
-
-setText(
-    "weatherHumidity",
-    "--"
-);
-
-setText(
-    "weatherWind",
-    "--"
-);
-
-setText(
-    "weatherCondition",
-    "Weather unavailable"
-);
-
-setText(
-    "weatherIcon",
-    "🌡️"
-);
-
-setText(
-    "weatherCity",
-    "Weather unavailable"
-);
-
-setText(
-    "weatherCountry",
-    ""
-);
-
-setText(
-    "clothingText",
-    "Weather information is currently unavailable."
-);
-
-const loading =
-    document.getElementById(
-        "weatherLoading"
+    setText(
+        "weatherTemp",
+        "--"
     );
 
-const content =
-    document.getElementById(
-        "weatherContent"
+    setText(
+        "weatherFeels",
+        "--"
     );
 
-if (loading) {
-    loading.style.display =
-        "none";
-}
+    setText(
+        "weatherHumidity",
+        "--"
+    );
 
-if (content) {
-    content.style.display =
-        "flex";
-}
+    setText(
+        "weatherWind",
+        "--"
+    );
 
+    setText(
+        "weatherCondition",
+        "Weather unavailable"
+    );
 
+    setText(
+        "weatherIcon",
+        "🌡️"
+    );
+
+    setText(
+        "weatherCity",
+        "Weather unavailable"
+    );
+
+    setText(
+        "weatherCountry",
+        ""
+    );
+
+    setText(
+        "clothingText",
+        "Weather information is currently unavailable."
+    );
+
+    const loading =
+        document.getElementById(
+            "weatherLoading"
+        );
+
+    const content =
+        document.getElementById(
+            "weatherContent"
+        );
+
+    if (loading) {
+        loading.style.display =
+            "none";
+    }
+
+    if (content) {
+        content.style.display =
+            "flex";
+    }
 }
 
 /* =========================================================
@@ -1097,123 +1034,120 @@ UPDATE WEATHER UI
 ========================================================= */
 
 function updateWeather(
-data,
-city,
-country
+    data,
+    city,
+    country
 ) {
 
+    const current =
+        data.current;
 
-const current =
-    data.current;
+    if (!current) {
+        showWeatherUnavailable();
 
-if (!current) {
-    showWeatherUnavailable();
+        return;
+    }
 
-    return;
-}
+    const temperature =
+        Math.round(
+            current.temperature_2m
+        );
 
-const temperature =
-    Math.round(
-        current.temperature_2m
+    const feels =
+        Math.round(
+            current.apparent_temperature
+        );
+
+    const humidity =
+        Math.round(
+            current.relative_humidity_2m
+        );
+
+    const wind =
+        Math.round(
+            current.wind_speed_10m
+        );
+
+    const weatherCode =
+        current.weather_code;
+
+    const weather =
+        getWeatherDescription(
+            weatherCode
+        );
+
+    setText(
+        "weatherTemp",
+        temperature
     );
 
-const feels =
-    Math.round(
-        current.apparent_temperature
+    setText(
+        "weatherFeels",
+        `${feels}°`
     );
 
-const humidity =
-    Math.round(
-        current.relative_humidity_2m
+    setText(
+        "weatherHumidity",
+        `${humidity}%`
     );
 
-const wind =
-    Math.round(
-        current.wind_speed_10m
+    setText(
+        "weatherWind",
+        `${wind} km/h`
     );
 
-const weatherCode =
-    current.weather_code;
-
-const weather =
-    getWeatherDescription(
-        weatherCode
+    setText(
+        "weatherCondition",
+        weather.text
     );
 
-setText(
-    "weatherTemp",
-    temperature
-);
-
-setText(
-    "weatherFeels",
-    ${feels}°
-);
-
-setText(
-    "weatherHumidity",
-    ${humidity}%
-);
-
-setText(
-    "weatherWind",
-    ${wind} km/h
-);
-
-setText(
-    "weatherCondition",
-    weather.text
-);
-
-setText(
-    "weatherIcon",
-    weather.icon
-);
-
-setText(
-    "weatherCity",
-    city ||
-    "Your location"
-);
-
-setText(
-    "weatherCountry",
-    country
-        ? · ${country}
-        : ""
-);
-
-setText(
-    "clothingText",
-    getClothingAdvice(
-        temperature,
-        feels,
-        weatherCode,
-        current.precipitation
-    )
-);
-
-const loading =
-    document.getElementById(
-        "weatherLoading"
+    setText(
+        "weatherIcon",
+        weather.icon
     );
 
-const content =
-    document.getElementById(
-        "weatherContent"
+    setText(
+        "weatherCity",
+        city ||
+        "Your location"
     );
 
-if (loading) {
-    loading.style.display =
-        "none";
-}
+    setText(
+        "weatherCountry",
+        country
+            ? `· ${country}`
+            : ""
+    );
 
-if (content) {
-    content.style.display =
-        "flex";
-}
+    setText(
+        "clothingText",
+        getClothingAdvice(
+            temperature,
+            feels,
+            weatherCode,
+            current.precipitation
+        )
+    );
 
+    const loading =
+        document.getElementById(
+            "weatherLoading"
+        );
 
+    const content =
+        document.getElementById(
+            "weatherContent"
+        );
+
+    if (loading) {
+        loading.style.display =
+            "none";
+    }
+
+    if (content) {
+        content.style.display =
+            "flex";
+    }
 }
 
 /* =========================================================
@@ -1223,107 +1157,104 @@ WMO WEATHER CODES
 
 function getWeatherDescription(code) {
 
+    if (code === 0) {
+        return {
+            text: "Clear sky",
+            icon: "☀️"
+        };
+    }
 
-if (code === 0) {
+    if (
+        code === 1 ||
+        code === 2
+    ) {
+        return {
+            text: "Partly cloudy",
+            icon: "🌤️"
+        };
+    }
+
+    if (code === 3) {
+        return {
+            text: "Overcast",
+            icon: "☁️"
+        };
+    }
+
+    if (
+        code === 45 ||
+        code === 48
+    ) {
+        return {
+            text: "Foggy",
+            icon: "🌫️"
+        };
+    }
+
+    if (
+        code >= 51 &&
+        code <= 57
+    ) {
+        return {
+            text: "Drizzle",
+            icon: "🌦️"
+        };
+    }
+
+    if (
+        code >= 61 &&
+        code <= 67
+    ) {
+        return {
+            text: "Rain",
+            icon: "🌧️"
+        };
+    }
+
+    if (
+        code >= 71 &&
+        code <= 77
+    ) {
+        return {
+            text: "Snow",
+            icon: "❄️"
+        };
+    }
+
+    if (
+        code >= 80 &&
+        code <= 82
+    ) {
+        return {
+            text: "Rain showers",
+            icon: "🌦️"
+        };
+    }
+
+    if (
+        code === 85 ||
+        code === 86
+    ) {
+        return {
+            text: "Snow showers",
+            icon: "🌨️"
+        };
+    }
+
+    if (
+        code >= 95 &&
+        code <= 99
+    ) {
+        return {
+            text: "Thunderstorm",
+            icon: "⛈️"
+        };
+    }
+
     return {
-        text: "Clear sky",
-        icon: "☀️"
+        text: "Unknown",
+        icon: "🌡️"
     };
-}
-
-if (
-    code === 1 ||
-    code === 2
-) {
-    return {
-        text: "Partly cloudy",
-        icon: "🌤️"
-    };
-}
-
-if (code === 3) {
-    return {
-        text: "Overcast",
-        icon: "☁️"
-    };
-}
-
-if (
-    code === 45 ||
-    code === 48
-) {
-    return {
-        text: "Foggy",
-        icon: "🌫️"
-    };
-}
-
-if (
-    code >= 51 &&
-    code <= 57
-) {
-    return {
-        text: "Drizzle",
-        icon: "🌦️"
-    };
-}
-
-if (
-    code >= 61 &&
-    code <= 67
-) {
-    return {
-        text: "Rain",
-        icon: "🌧️"
-    };
-}
-
-if (
-    code >= 71 &&
-    code <= 77
-) {
-    return {
-        text: "Snow",
-        icon: "❄️"
-    };
-}
-
-if (
-    code >= 80 &&
-    code <= 82
-) {
-    return {
-        text: "Rain showers",
-        icon: "🌦️"
-    };
-}
-
-if (
-    code === 85 ||
-    code === 86
-) {
-    return {
-        text: "Snow showers",
-        icon: "🌨️"
-    };
-}
-
-if (
-    code >= 95 &&
-    code <= 99
-) {
-    return {
-        text: "Thunderstorm",
-        icon: "⛈️"
-    };
-}
-
-return {
-    text: "Unknown",
-    icon: "🌡️"
-};
-
-
 }
 
 /* =========================================================
@@ -1331,67 +1262,65 @@ CLOTHING ADVICE
 ========================================================= */
 
 function getClothingAdvice(
-temperature,
-feels,
-weatherCode,
-precipitation
+    temperature,
+    feels,
+    weatherCode,
+    precipitation
 ) {
 
+    const rainy =
+        (
+            weatherCode >= 51 &&
+            weatherCode <= 67
+        ) ||
+        (
+            weatherCode >= 80 &&
+            weatherCode <= 82
+        );
 
-const rainy =
-    (
-        weatherCode >= 51 &&
-        weatherCode <= 67
-    ) ||
-    (
-        weatherCode >= 80 &&
-        weatherCode <= 82
-    );
+    const snowy =
+        weatherCode >= 71 &&
+        weatherCode <= 86;
 
-const snowy =
-    weatherCode >= 71 &&
-    weatherCode <= 86;
+    const storm =
+        weatherCode >= 95;
 
-const storm =
-    weatherCode >= 95;
+    if (storm) {
+        return "Rain jacket + waterproof shoes. Stay protected from the storm.";
+    }
 
-if (storm) {
-    return "Rain jacket + waterproof shoes. Stay protected from the storm.";
-}
+    if (
+        snowy ||
+        feels <= 0
+    ) {
+        return "Heavy coat, warm layers, gloves and insulated shoes.";
+    }
 
-if (
-    snowy ||
-    feels <= 0
-) {
-    return "Heavy coat, warm layers, gloves and insulated shoes.";
-}
+    if (feels <= 8) {
+        return rainy
+            ? "Warm jacket + waterproof shoes. Bring an umbrella."
+            : "Warm jacket, long trousers and closed shoes.";
+    }
 
-if (feels <= 8) {
-    return rainy
-        ? "Warm jacket + waterproof shoes. Bring an umbrella."
-        : "Warm jacket, long trousers and closed shoes.";
-}
+    if (feels <= 15) {
+        return rainy
+            ? "Light jacket + waterproof layer. An umbrella is useful."
+            : "Light jacket or hoodie with long trousers.";
+    }
 
-if (feels <= 15) {
-    return rainy
-        ? "Light jacket + waterproof layer. An umbrella is useful."
-        : "Light jacket or hoodie with long trousers.";
-}
+    if (feels <= 22) {
+        return rainy
+            ? "Light clothes with a rain jacket or umbrella."
+            : "Comfortable shirt with light trousers or jeans.";
+    }
 
-if (feels <= 22) {
-    return rainy
-        ? "Light clothes with a rain jacket or umbrella."
-        : "Comfortable shirt with light trousers or jeans.";
-}
+    if (feels <= 28) {
+        return rainy
+            ? "Light clothes + rain protection."
+            : "T-shirt and comfortable lightweight trousers.";
+    }
 
-if (feels <= 28) {
-    return rainy
-        ? "Light clothes + rain protection."
-        : "T-shirt and comfortable lightweight trousers.";
-}
-
-return "Light breathable clothes, shorts if comfortable, and stay hydrated.";
-
+    return "Light breathable clothes, shorts if comfortable, and stay hydrated.";
 }
 
 /* =========================================================
