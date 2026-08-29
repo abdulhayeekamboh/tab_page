@@ -1,4 +1,3 @@
-```javascript
 /* =========================================================
    COSMIC WEBTAB - MAIN JAVASCRIPT
    UPDATED LOCAL-FILE VERSION
@@ -1958,4 +1957,3 @@ function getClothingAdvice(
    ========================================================= */
 
 loadPublicActivity();
-```
