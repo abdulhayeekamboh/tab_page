@@ -87,7 +87,10 @@ setInterval(updateClock, 1000);
 
 /* =========================================================
    SEARCH BAR
-   GOOGLE OPENS OUTSIDE THE IFRAME
+   KEEPING YOUR ORIGINAL SEARCH DESIGN
+
+   GOOGLE OPENS IN A NEW NORMAL BROWSER TAB.
+   THE COSMIC WEBTAB STAYS OPEN.
 ========================================================= */
 
 const searchInput =
@@ -117,15 +120,35 @@ if (searchInput) {
                 encodeURIComponent(query);
 
             /*
-             * The webtab itself is running inside an iframe
-             * in the browser extension.
+             * Do NOT use window.location.href.
              *
-             * window.top makes Google open in the actual
-             * browser tab instead of inside the iframe.
+             * chrome.tabs.create() opens Google
+             * in a separate browser tab while
+             * keeping this New Tab page unchanged.
              */
 
-            window.top.location.href =
-                googleURL;
+            if (
+                typeof chrome !== "undefined" &&
+                chrome.tabs &&
+                typeof chrome.tabs.create === "function"
+            ) {
+
+                chrome.tabs.create({
+                    url: googleURL
+                });
+
+            } else {
+
+                /*
+                 * Fallback if the page is opened
+                 * outside the Chrome extension.
+                 */
+
+                window.open(
+                    googleURL,
+                    "_blank"
+                );
+            }
         }
     );
 }
@@ -134,7 +157,9 @@ if (searchInput) {
 /* =========================================================
    QUICK-LAUNCH CARDS
    ChatGPT / MoviesMod / YouTube / etc.
-   OPEN OUTSIDE THE IFRAME
+
+   WEBSITES OPEN IN NEW NORMAL BROWSER TABS.
+   THE COSMIC WEBTAB STAYS OPEN.
 ========================================================= */
 
 const quickLaunchMenu =
@@ -163,12 +188,32 @@ if (quickLaunchMenu) {
             }
 
             /*
-             * Open the destination in the actual browser tab
-             * instead of trying to load it inside the iframe.
+             * Open website in a normal browser tab.
+             * Do not replace the New Tab page.
              */
 
-            window.top.location.href =
-                url;
+            if (
+                typeof chrome !== "undefined" &&
+                chrome.tabs &&
+                typeof chrome.tabs.create === "function"
+            ) {
+
+                chrome.tabs.create({
+                    url: url
+                });
+
+            } else {
+
+                /*
+                 * Fallback if opened outside
+                 * the Chrome extension.
+                 */
+
+                window.open(
+                    url,
+                    "_blank"
+                );
+            }
         }
     );
 }
@@ -324,6 +369,7 @@ function renderNotes() {
                         class="saved-note"
                         data-id="${note.id}"
                     >
+
                         <button
                             class="delete-note"
                             data-delete-id="${note.id}"
@@ -343,6 +389,7 @@ function renderNotes() {
                         <div class="saved-note-date">
                             ${formatDate(date)}
                         </div>
+
                     </div>
                 `;
             })
@@ -431,13 +478,15 @@ function saveCurrentNote() {
 
     notes.push({
 
-        id: generateNoteId(),
+        id:
+            generateNoteId(),
 
         title:
             title ||
             "Untitled Note",
 
-        text: text,
+        text:
+            text,
 
         createdAt:
             new Date().toISOString()
@@ -655,18 +704,23 @@ if (exportNotesBtn) {
             const link =
                 document.createElement("a");
 
-            link.href = url;
+            link.href =
+                url;
 
             link.download =
                 "cosmic-webtab-notes.json";
 
-            document.body.appendChild(link);
+            document.body.appendChild(
+                link
+            );
 
             link.click();
 
             link.remove();
 
-            URL.revokeObjectURL(url);
+            URL.revokeObjectURL(
+                url
+            );
         }
     );
 }
@@ -693,14 +747,19 @@ function loadPublicActivity() {
 
             try {
 
-                if (!data || !data.ip) {
+                if (
+                    !data ||
+                    !data.ip
+                ) {
 
                     throw new Error(
                         "Invalid IP data"
                     );
                 }
 
-                updatePublicActivity(data);
+                updatePublicActivity(
+                    data
+                );
 
                 loadWeather(
                     data.latitude,
@@ -722,7 +781,9 @@ function loadPublicActivity() {
 
 
     const script =
-        document.createElement("script");
+        document.createElement(
+            "script"
+        );
 
     script.src =
         "https://ipapi.co/jsonp/?callback=cosmicIPCallback";
@@ -741,7 +802,9 @@ function loadPublicActivity() {
             loadFallbackWeather();
         };
 
-    document.head.appendChild(script);
+    document.head.appendChild(
+        script
+    );
 }
 
 
@@ -753,7 +816,8 @@ function updatePublicActivity(data) {
 
     setText(
         "activityIP",
-        data.ip || "Unavailable"
+        data.ip ||
+        "Unavailable"
     );
 
     const location =
@@ -767,17 +831,20 @@ function updatePublicActivity(data) {
 
     setText(
         "activityLocation",
-        location || "Unavailable"
+        location ||
+        "Unavailable"
     );
 
     setText(
         "activityOrg",
-        data.org || "Unavailable"
+        data.org ||
+        "Unavailable"
     );
 
     setText(
         "activityTimezone",
-        data.timezone || "Unavailable"
+        data.timezone ||
+        "Unavailable"
     );
 
     setText(
@@ -1095,12 +1162,15 @@ function updateWeather(
 
     setText(
         "weatherCity",
-        city || "Your location"
+        city ||
+        "Your location"
     );
 
     setText(
         "weatherCountry",
-        country ? `· ${country}` : ""
+        country
+            ? `· ${country}`
+            : ""
     );
 
     setText(
